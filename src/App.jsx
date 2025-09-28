@@ -483,19 +483,21 @@ const App = () => {
 
 
     return (
-        <Layout style={{ minHeight: '100vh', backgroundColor: '#f5f5f5', width: '100vw' }}>
-            <Content style={{ padding: '50px 24px' }}>
+        <Layout style={{ maxHeight: '100vh', backgroundColor: '#f5f5f5' }}>
+            <Content style={{ padding: '50px 20px'}}>
+                <div style={{ maxWidth: '1920px', margin: '0 auto' }}>
                 <Card 
-                    title={<Title level={2} style={{ margin: 0, textAlign: 'center' }}>Educational RAG Platform</Title>}
+                    title={<Title level={2} style={{ margin: 0, textAlign: 'center', marginTop: '20px' }}>Educational Reports Research</Title>}
                     bordered={false}
                     style={{ 
                         borderRadius: 12, 
                         boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
-                        width: '100%'
+                        marginTop: '-20px',
+                        boxShadow: 'rgba(255, 255, 255, 0.1) 0px 1px 1px 0px inset, rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px',
                     }}
                 >
-                    <Paragraph style={{ textAlign: 'center', marginBottom: 24, color: '#8c8c8c' }}>
-                        Search authoritative educational reports to get AI-grounded answers. **(Knowledge base grows with every new search!)**
+                    <br/><Paragraph style={{ textAlign: 'center', marginBottom: 24, color: '#8c8c8c' }}>
+                        Search Authoritative Educational Reports across the Internet to get valid Research
                     </Paragraph>
                     
                     <Input.Search
@@ -508,11 +510,11 @@ const App = () => {
                         onSearch={handleSearch}
                         loading={loading}
                         disabled={loading || !isDbReady || isSeedingFromWeb || !apiKeyProvided}
-                        style={{ marginBottom: 24 }}
+                        style={{ marginBottom: '50px', maxWidth: '800px', margin: '0 auto', display: 'block', marginTop: '50px'  }}
                     />
                     
                     {!apiKeyProvided && (
-                        <div style={{ textAlign: 'center', padding: '20px 0', backgroundColor: '#fffbe6', border: '1px solid #ffe58f', borderRadius: 8, marginBottom: 20 }}>
+                        <div style={{ textAlign: 'center', padding: '20px 0', backgroundColor: '#fffbe6', border: '1px solid #ffe58f', borderRadius: 8, marginBottom: '0px' }}>
                             <WarningOutlined style={{ color: '#faad14', marginRight: 8 }} />
                             <Paragraph strong style={{ display: 'inline', color: '#faad14' }}>
                                 **CRITICAL: Gemini API Key is missing!** Seeding and RAG will fail. Please update the `API_KEY` variable in `App.jsx`.
@@ -525,8 +527,8 @@ const App = () => {
                             <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} />
                             <Paragraph style={{ marginTop: 15 }}>
                                 {isSeedingFromWeb 
-                                    ? "Expanding Knowledge Base: Searching web and adding a new report to the database..."
-                                    : "Connecting to Firebase and preparing database..."
+                                    ? "Expanding Knowledge Base: Searching web for a new report..."
+                                    : "Connecting to Knowledge Base and Retrieving Report..."
                                 }
                             </Paragraph>
                         </div>
@@ -540,7 +542,7 @@ const App = () => {
                                     <Paragraph style={{ marginTop: 15 }}>Retrieving data and generating AI-grounded summary...</Paragraph>
                                 </div>
                             ) : (
-                                <Space direction="vertical" style={{ width: '90vw' }} size="middle">
+                                <Space direction="vertical" size="middle">
                                     <Title level={4}>Found {results.length} Relevant Reports (Ranked by Similarity Score):</Title>
                                     {results.map((report) => (
                                         <Card 
@@ -553,12 +555,13 @@ const App = () => {
                                             </>}
                                         >
                                             <Title level={5}>{report.title}</Title>
-                                            <Paragraph strong style={{ color: '#1890ff' }}>AI-Grounded Answer:</Paragraph>
+                                            <Paragraph strong style={{ color: '#1890ff' }}>AI-Grounded Summary:</Paragraph>
                                             <Paragraph>{report.summary}</Paragraph>
+                                            <a style={{fontSize: '12px'}} href={report.url || ''} target='_blank'>{report.url || ''}</a>
                                         </Card>
                                     ))}
                                     <Paragraph type="secondary" style={{ textAlign: 'center', paddingTop: '10px' }}>
-                                        *Answers are generated by Gemini 2.5 Flash, grounded in the retrieved reports.
+                                        Summaries are generated based on the query, finding answers in the retrieved reports.
                                     </Paragraph>
                                 </Space>
                             )}
@@ -566,17 +569,18 @@ const App = () => {
                     )}
                     
                     {isDbReady && apiKeyProvided && !isSeedingFromWeb && !loading && results.length === 0 && (
-                        <div style={{ textAlign: 'center', padding: '30px 0', border: '1px dashed #d9d9d9', borderRadius: 8 }}>
+                        <div style={{ textAlign: 'center', padding: '30px 0', border: '1px dashed #d9d9d9', borderRadius: 8, marginTop: '50px' }}>
                             <Paragraph style={{ color: '#8c8c8c' }}>
-                                Enter a query to search the dynamic educational database. If no relevant reports are found, the system will find one for you and save it!
+                                Enter a query to search the dynamic educational database. If no relevant reports are found, a relevant report will be fetched from the web!
                             </Paragraph>
                         </div>
                     )}
                 </Card>
+              </div>
+              
             </Content>
-
-            <Footer style={{ textAlign: 'center', color: '#8c8c8c' }}>
-                Educational RAG Platform powered by Gemini API and Ant Design
+            <Footer style={{ textAlign: 'center', color: '#8c8c8c', marginTop: '0px'}}>
+                @Educational Reports Research
             </Footer>
         </Layout>
     );
