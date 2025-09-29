@@ -400,7 +400,7 @@ const App = () => {
                 
                 if (docVector && typeof docVector === 'object') {
                     const similarityScore = cosineSimilarity(queryVector, docVector);
-                    if (similarityScore > 0.25) { 
+                    if (similarityScore > 0.275) { 
                         retrievedReports.push({ 
                             id: doc.id, 
                             ...report, 
