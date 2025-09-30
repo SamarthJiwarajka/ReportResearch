@@ -83,8 +83,8 @@ async function fetchAndGenerateSingleReport(userQuery) {
         return null;
     }
     
-    const systemPrompt = "You are a professional educational data curator. Your task is to perform an exhaustive search of research published since 2015 and summarize ONE single, high-quality report relevant to the user's query, prioritizing sources from the top 100 globally ranked universities. **For the title, provide the exact, original title of the source document.** If a specific report or paper is found, include its URL in a new field. Return the result as a JSON object, strictly following the provided schema.";    
-    const fullQuery = `Find and summarize one highly relevant, authoritative educational report since 2015 related to the topic: "${userQuery}".`;
+    const systemPrompt = "You are a professional EDUCATIONAL data curator. Your task is to perform an exhaustive search of research published since 2015 and summarize ONE single, high-quality report relevant to the user's query, taking sources from the top 100 globally ranked universities. If not found, other universities may be used. **For the title, provide the exact, original title of the source document.** If a specific report or paper is found, include its URL in a new field. Return the result as a JSON object, strictly following the provided schema.";    
+    const fullQuery = `Find and summarize one highly relevant, authoritative EDUCATIONAL report since 2015 related to the topic: "${userQuery}".`;
 
     const payload = {
         contents: [{ parts: [{ text: fullQuery }] }],
@@ -374,7 +374,7 @@ const App = () => {
                 
                 if (docVector && typeof docVector === 'object') {
                     const similarityScore = cosineSimilarity(queryVector, docVector);
-                    if (similarityScore > 0.31) { 
+                    if (similarityScore > 0.35) { 
                         retrievedReports.push({ 
                             id: doc.id, 
                             ...report, 
@@ -450,20 +450,17 @@ const App = () => {
 
 
     return (
-        <Layout style={{ maxHeight: '100vh', backgroundColor: '#f5f5f5' }}>
+        <Layout style={{ maxHeight: '100vh', backgroundColor: 'transparent' }}>
             <Content style={{ padding: '50px 20px'}}>
-                <div style={{ maxWidth: '1920px', margin: '0 auto' }}>
+                <div style={{ maxWidth: '1920px', margin: '0 auto', paddingBottom: '50px', marginBottom: '-30px'    }}>
                 <Card 
-                    title={<Title level={2} style={{ margin: 0, textAlign: 'center', marginTop: '20px' }}>Educational Reports Research</Title>}
+                    title={<Title level={2} style={{ margin: 0, textAlign: 'center', marginTop: '20px'}}>Educational Reports Research</Title>}
                     bordered={false}
                     style={{ 
-                        borderRadius: 12, 
-                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+                        borderRadius: 14, 
                         marginTop: '-20px',
-                        boxShadow: 'rgba(255, 255, 255, 0.1) 0px 1px 1px 0px inset, rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px',
-                    }}
-                >
-                    <br/><Paragraph style={{ textAlign: 'center', marginBottom: 24, color: '#8c8c8c' }}>
+                        boxShadow: 'rgba(255, 255, 255, 0.1) 0px 1px 1px 0px inset, rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px',}}>
+                    <br/><Paragraph style={{ textAlign: 'center', marginBottom: 24 }}>
                         Search Authoritative Educational Reports across the Internet to get valid Research
                     </Paragraph>
                     
@@ -510,21 +507,22 @@ const App = () => {
                                 </div>
                             ) : (
                                 <Space direction="vertical" size="middle">
-                                    <Title level={4}>Found {results.length} Relevant Reports (Ranked by Similarity Score):</Title>
+                                    <Title level={4}>Found {results.length} Relevant Report(s):</Title>
                                     {results.map((report) => (
                                         <Card 
                                             key={report.id} 
-                                            style={{ borderRadius: 8, borderLeft: '3px solid #1890ff' }}
+                                            style={{ borderRadius: 8, borderLeft: '3px solid #1890ff', }}
                                             extra={<>
                                                 <Tag color="blue">Score: {report.score.toFixed(3)}</Tag>
                                                 <Tag color="geekblue">Category: {report.category || 'N/A'}</Tag>
                                                 <Tag color="purple">Publisher: {report.publisher || 'N/A'}</Tag>
                                             </>}
                                         >
-                                            <Title level={5}>{report.title}</Title>
+                                            <div style={{marginTop: '-30px'}}><Title level={5}>{report.title}</Title>
                                             <Paragraph strong style={{ color: '#1890ff' }}>AI-Grounded Summary:</Paragraph>
                                             <Paragraph>{report.summary}</Paragraph>
                                             <a style={{fontSize: '12px'}} href={report.url || ''} target='_blank'>{report.url || ''}</a>
+                                        </div>
                                         </Card>
                                     ))}
                                     <Paragraph type="secondary" style={{ textAlign: 'center', paddingTop: '10px' }}>
@@ -537,7 +535,7 @@ const App = () => {
                     
                     {isDbReady && apiKeyProvided && !isSeedingFromWeb && !loading && results.length === 0 && (
                         <div style={{ textAlign: 'center', padding: '30px 0', border: '1px dashed #d9d9d9', borderRadius: 8, marginTop: '50px' }}>
-                            <Paragraph style={{ color: '#8c8c8c' }}>
+                            <Paragraph style={{ color: '#8c8c8c', }}>
                                 Enter a query to search the dynamic educational database. If no relevant reports are found, a relevant report will be fetched from the web!
                             </Paragraph>
                         </div>
@@ -546,7 +544,7 @@ const App = () => {
               </div>
               
             </Content>
-            <Footer style={{ textAlign: 'center', color: '#8c8c8c', marginTop: '0px'}}>
+            <Footer style={{ textAlign: 'center', color: '#8c8c8c', marginTop: '-20px', backgroundColor: 'transparent' }}>
                 @Educational Reports Research
             </Footer>
         </Layout>

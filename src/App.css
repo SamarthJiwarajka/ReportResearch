@@ -14,6 +14,5 @@ html, body, #root {
 
 #root {
   min-width: 100%;
-  height: 100%;
   display: flex; /* Helps ensure flex children don't overflow */
 } 
