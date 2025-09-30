@@ -2,23 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { Layout, Input, Button, Card, Spin, Space, Typography, notification, Tag } from 'antd';
 import { SearchOutlined, LoadingOutlined, WarningOutlined } from '@ant-design/icons';
 
-// --- FIREBASE IMPORTS ---
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from 'firebase/auth';
 import { getFirestore, collection, addDoc, getDocs, doc, updateDoc } from 'firebase/firestore'; 
 import { setLogLevel } from 'firebase/firestore';
 
-setLogLevel('debug'); // Enable debug logging for Firestore
+setLogLevel('debug');
 
 const { Content, Footer } = Layout;
 const { Title, Paragraph } = Typography;
 
-// --- GLOBAL VARIABLES SETUP (REQUIRED FOR LOCAL DEVELOPMENT) ---
 const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 
-// 🚨 1. FIREBASE CONFIGURATION:
-// If you are running this locally, you must replace the content of this `userProvidedConfig` object
-// with the actual configuration object you copied from the Firebase console.
+
 const userProvidedConfig = {
 apiKey: "AIzaSyAeXNzjwkghoIvhRJ8VdFrVVgSM__czRd4",
 authDomain: "ai-project-reports.firebaseapp.com",
@@ -28,8 +24,6 @@ messagingSenderId: "617306238119",
 appId: "1:617306238119:web:37b4e635d6ff9e9ce57f82",
 measurementId: "G-BHPFZS22RQ"};
 
-// This variable determines the final config used: prioritize the user's config if they've modified it,
-// otherwise use the environment variable provided by the Canvas (__firebase_config).
 const firebaseConfig = Object.keys(userProvidedConfig).length > 0 ? userProvidedConfig : 
                        JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
                        
@@ -38,13 +32,11 @@ const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial
 const REPORTS_COLLECTION_NAME = 'reports';
 const COLLECTION_PATH = `artifacts/${appId}/public/data/${REPORTS_COLLECTION_NAME}`;
 
-// 🚨 2. GEMINI API KEY:
-// IMPORTANT: The API key for Gemini is required for all AI steps (seeding and RAG).
+
 const API_KEY = "AIzaSyAt4wkIhJcLyu725jzqKsPyEuv7UbfHQ1U"; 
 const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + API_KEY;
 
 
-// --- VECTOR SEARCH UTILITY FUNCTIONS (Simulated In-Memory) ---
 const tokenizeAndVectorize = (text) => {
     const tokens = text.toLowerCase().match(/\b\w+\b/g) || [];
     const vector = {};
@@ -85,7 +77,6 @@ const cosineSimilarity = (vecA, vecB) => {
 };
 
 
-// --- AI GENERATION UTILITY FUNCTION (FOR RAG) ---
 async function fetchAndGenerateSingleReport(userQuery) {
     if (!API_KEY) {
         console.error("API Key missing, cannot fetch reports from the web.");
@@ -114,13 +105,11 @@ async function fetchAndGenerateSingleReport(userQuery) {
     "publisher": { "type": "STRING", "description": "The publisher or source of the report (e.g., Stanford University, UNESCO)." },
     "url": { "type": "STRING", "description": "The URL of the original source document." }
 }
-                // REMOVED propertyOrdering TO REDUCE COMPLEXITY
             }
         }
     };
 
-    // This is the fixed 5-second wait, which should resolve the 429 error.
-    const waitTime = 5000; // 5000 milliseconds = 5 seconds
+    const waitTime = 5000;
 
     for (let i = 0; i < 3; i++) {
         try {
@@ -135,8 +124,7 @@ async function fetchAndGenerateSingleReport(userQuery) {
             if (!response.ok) {
                 console.error(`Gemini API HTTP Error (Attempt ${i + 1}): Status ${response.status}`);
                 if (i < 2) {
-                    // ... inside the loop
-await new Promise(resolve => setTimeout(resolve, Math.pow(2, i) * 1000 + Math.random() * 100));
+                  await new Promise(resolve => setTimeout(resolve, Math.pow(2, i) * 1000 + Math.random() * 100));
                     continue;
                 }
                 throw new Error(`HTTP error! Status: ${response.status}`);
@@ -165,7 +153,6 @@ await new Promise(resolve => setTimeout(resolve, Math.pow(2, i) * 1000 + Math.ra
     return null; 
 }
 
-// --- AI GENERATION UTILITY FUNCTION (FOR FINAL SUMMARY) ---
 async function generateAISummary(reportContent, userQuery) {
     if (!API_KEY) {
         console.error("API Key missing, cannot generate summary.");
@@ -190,8 +177,7 @@ async function generateAISummary(reportContent, userQuery) {
         contents: [{ parts: [{ text: prompt }] }],
     };
     
-    // Implement retry logic for transient errors like 503
-    for (let i = 0; i < 5; i++) { // Increase the number of attempts
+    for (let i = 0; i < 5; i++) {
         try {
             const response = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + API_KEY, {
                 method: 'POST',
@@ -204,7 +190,7 @@ async function generateAISummary(reportContent, userQuery) {
                 const delay = retryAfter ? parseInt(retryAfter) * 1000 : Math.pow(2, i) * 1000 + Math.random() * 1000;
                 console.warn(`Attempt ${i + 1} failed with status ${response.status}. Retrying in ${delay / 1000} seconds...`);
                 await new Promise(resolve => setTimeout(resolve, delay));
-                continue; // Continue to the next loop iteration
+                continue;
             }
 
             if (!response.ok) {
@@ -219,19 +205,16 @@ async function generateAISummary(reportContent, userQuery) {
         }
     }
 
-    // If all attempts fail
     return "Failed to generate summary after multiple attempts.";
 }
 
 
 
-// --- APP COMPONENT ---
 const App = () => {
     const [query, setQuery] = useState('');
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(false);
     
-    // Firebase State
     const [db, setDb] = useState(null);
     const [auth, setAuth] = useState(null);
     const [userId, setUserId] = useState(null);
@@ -239,7 +222,6 @@ const App = () => {
     const [isSeedingFromWeb, setIsSeedingFromWeb] = useState(false); 
     const [apiKeyProvided, setApiKeyProvided] = useState(false); 
 
-    // --- FIREBASE INITIALIZATION AND AUTHENTICATION (Phase 1) ---
     useEffect(() => {
         if (!API_KEY) {
             setApiKeyProvided(false);
@@ -282,7 +264,7 @@ const App = () => {
                 setIsDbReady(true);
             });
 
-            return () => unsubscribe(); // Cleanup auth listener
+            return () => unsubscribe();
         } catch (error) {
             console.error("Firebase initialization failed:", error);
             notification.error({
@@ -292,15 +274,12 @@ const App = () => {
         }
     }, []); 
 
-    // --- DATABASE READY CHECK AND REPAIR (Phase 2) ---
-    // Note: Initial BULK seeding is now REMOVED. Database grows only on-demand during search.
     useEffect(() => {
         if (isDbReady && db) {
              seedDatabase(db);
         }
     }, [isDbReady, db]); 
 
-    // --- DATABASE REPAIR LOGIC (Kept for cleanup of previous version's partial seeds) ---
     const seedDatabase = async (dbInstance) => {
         if (!dbInstance) return;
 
@@ -309,7 +288,6 @@ const App = () => {
         try {
             const querySnapshot = await getDocs(reportsCollectionRef);
 
-            // --- DATA REPAIR LOGIC (Only runs if a previous version left incomplete data) ---
             let needsVectorUpdate = false;
             const firstDoc = querySnapshot.docs[0];
             if (firstDoc && !firstDoc.data().vector) {
@@ -360,7 +338,6 @@ const App = () => {
         }
     };
     
-    // --- CORE SEARCH FUNCTION (ON-DEMAND RAG) ---
     const handleSearch = async (userQuery) => {
         if (!isDbReady || isSeedingFromWeb) {
             notification.warning({
@@ -385,15 +362,12 @@ const App = () => {
         try {
             const reportsCollectionRef = collection(db, COLLECTION_PATH);
             
-            // 1. GENERATE QUERY VECTOR
             const queryVector = tokenizeAndVectorize(userQuery);
 
             let retrievedReports = [];
             
-            // --- LOOP: FIRST ATTEMPT AGAINST DATABASE ---
             const initialQuerySnapshot = await getDocs(reportsCollectionRef);
 
-            // 2. VECTOR SEARCH (Cosine Similarity Ranking on existing data)
             initialQuerySnapshot.forEach(doc => {
                 const report = doc.data();
                 const docVector = report.vector;
@@ -410,7 +384,6 @@ const App = () => {
                 }
             });
 
-            // 3. ON-DEMAND SEEDING TRIGGER
             if (retrievedReports.length === 0) {
                 notification.info({ 
                     message: 'Expanding Knowledge Base', 
@@ -418,11 +391,9 @@ const App = () => {
                 });
                 setIsSeedingFromWeb(true);
                 
-                // --- THIS CALL LIKELY CAUSES THE 400 ERROR ---
                 const newReportData = await fetchAndGenerateSingleReport(userQuery);
                 
                 if (newReportData) {
-                    // 4. ADD NEW REPORT TO FIRESTORE
                     const vectorText = `${newReportData.title} ${newReportData.content} ${newReportData.category || ''} ${newReportData.keywords.join(" ")}`;
                     const reportVector = tokenizeAndVectorize(vectorText);
                     
@@ -430,7 +401,6 @@ const App = () => {
                         const docRef = await addDoc(reportsCollectionRef, { ...newReportData, vector: reportVector });
                         console.log(`Successfully seeded new report: ${docRef.id}`);
 
-                        // Immediately use the newly added report for RAG
                         retrievedReports.push({ 
                             id: docRef.id, 
                             ...newReportData, 
@@ -451,19 +421,16 @@ const App = () => {
                 setIsSeedingFromWeb(false);
             }
             
-            // Final check after potential seeding
             if (retrievedReports.length === 0) {
                 setResults([]);
                 notification.info({ message: 'No Data Found', description: 'The search returned zero relevant reports from the database or the web.' });
                 return;
             }
 
-            // 5. RETRIEVAL (Rank and limit)
             const finalRetrievedReports = retrievedReports
                 .sort((a, b) => b.score - a.score) 
                 .slice(0, 3); 
 
-            // 6. RAG GENERATION (Call the AI for the retrieved/newly added reports)
             const generatedResults = await Promise.all(
                 finalRetrievedReports.map(async (report) => ({ 
                     ...report,
