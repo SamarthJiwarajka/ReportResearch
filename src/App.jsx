@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Layout, Input, Button, Card, Spin, Space, Typography, notification, Tag } from 'antd';
 import { SearchOutlined, LoadingOutlined, WarningOutlined } from '@ant-design/icons';
+import '@ant-design/v5-patch-for-react-19';
 
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from 'firebase/auth';
 import { getFirestore, collection, addDoc, getDocs, doc, updateDoc } from 'firebase/firestore'; 
-import { setLogLevel } from 'firebase/firestore';
+//import { setLogLevel } from 'firebase/firestore';
 
-setLogLevel('debug');
+//setLogLevel('debug');
 
 const { Content, Footer } = Layout;
 const { Title, Paragraph } = Typography;
@@ -374,7 +375,7 @@ const App = () => {
                 
                 if (docVector && typeof docVector === 'object') {
                     const similarityScore = cosineSimilarity(queryVector, docVector);
-                    if (similarityScore > 0.35) { 
+                    if (similarityScore > 0.350) { 
                         retrievedReports.push({ 
                             id: doc.id, 
                             ...report, 
@@ -454,8 +455,8 @@ const App = () => {
             <Content style={{ padding: '50px 20px'}}>
                 <div style={{ maxWidth: '1920px', margin: '0 auto', paddingBottom: '50px', marginBottom: '-30px'    }}>
                 <Card 
-                    title={<Title level={2} style={{ margin: 0, textAlign: 'center', marginTop: '20px'}}>Educational Reports Research</Title>}
-                    bordered={false}
+                    title={<Title level={2} style={{ margin: 0, textAlign: 'center', marginTop: '20px', marginBottom: "10px", textWrap: "wrap"}}>Educational Reports Research</Title>}
+                    
                     style={{ 
                         borderRadius: 14, 
                         marginTop: '-20px',
@@ -492,7 +493,7 @@ const App = () => {
                             <Paragraph style={{ marginTop: 15 }}>
                                 {isSeedingFromWeb 
                                     ? "Expanding Knowledge Base: Searching web for a new report..."
-                                    : "Connecting to Knowledge Base and Retrieving Report..."
+                                    : "Connecting to Knowledge Base and Retrieving Reports..."
                                 }
                             </Paragraph>
                         </div>
@@ -511,8 +512,7 @@ const App = () => {
                                     {results.map((report) => (
                                         <Card 
                                             key={report.id} 
-                                            style={{ borderRadius: 8, borderLeft: '3px solid #1890ff', }}
-                                            extra={<>
+                                            style={{ borderRadius: 8, borderLeft: '3px solid #1890ff', maxWidth: '100vw', boxShadow: 'rgba(149, 157, 165, 0.2) 0px 8px 24px'}}                                            extra={<>
                                                 <Tag color="blue">Score: {report.score.toFixed(3)}</Tag>
                                                 <Tag color="geekblue">Category: {report.category || 'N/A'}</Tag>
                                                 <Tag color="purple">Publisher: {report.publisher || 'N/A'}</Tag>
@@ -544,7 +544,7 @@ const App = () => {
               </div>
               
             </Content>
-            <Footer style={{ textAlign: 'center', color: '#8c8c8c', marginTop: '-20px', backgroundColor: 'transparent' }}>
+            <Footer style={{ textAlign: 'center', color: '#8c8c8c', marginTop: '-30px', backgroundColor: 'transparent' }}>
                 @Educational Reports Research
             </Footer>
         </Layout>
