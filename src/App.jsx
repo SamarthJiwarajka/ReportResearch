@@ -17,7 +17,7 @@ const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 
 
 const userProvidedConfig = {
-apiKey: "AIzaSyAeXNzjwkghoIvhRJ8VdFrVVgSM__czRd4",
+apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "",
 authDomain: "ai-project-reports.firebaseapp.com",
 projectId: "ai-project-reports",
 storageBucket: "ai-project-reports.firebasestorage.app",
