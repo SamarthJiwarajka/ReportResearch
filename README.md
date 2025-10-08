@@ -1,16 +1,15 @@
-# React + Vite
+# Reports Research
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Built for Education
 
-Currently, two official plugins are available:
+Research Across Millions of Educational Reports and General Reports, published since 2015, and gget Reviewed Answers 📑
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Scouring For Reports + Summary Generation
 
-## React Compiler
+The Gemini API looks across the entire web, finds a suitable report, and provides you with an AI Generated summary directly answering your query ✨
 
-The React Compiler is not enabled on this template. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Database
 
-## Expanding the ESLint configuration
+A Firebase Database is utilized to efficiently store Reports which have been found previously. This can greatly help in reducing research time if a topic has been searched for before, as it can be directly fetched from the "Knowledge Base". 🧠
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Every Time you research, the report gets added to the Database, creating a better response for a future user 📄
