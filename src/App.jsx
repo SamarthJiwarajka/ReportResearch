@@ -518,7 +518,7 @@ const App = () => {
                                                 <Tag color="purple">Publisher: {report.publisher || 'N/A'}</Tag>
                                             </>}
                                         >
-                                            <div style={{marginTop: '-30px'}}><Title level={5}>{report.title}</Title>
+                                            <div style={{marginTop: '-30px', textWrap: 'wrap'}}><Title level={5}>{report.title}</Title>
                                             <Paragraph strong style={{ color: '#1890ff' }}>AI-Grounded Summary:</Paragraph>
                                             <Paragraph>{report.summary}</Paragraph>
                                             <a style={{fontSize: '12px'}} href={report.url || ''} target='_blank'>{report.url || ''}</a>
