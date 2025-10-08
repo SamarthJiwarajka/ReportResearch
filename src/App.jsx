@@ -536,7 +536,7 @@ const App = () => {
                     {isDbReady && apiKeyProvided && !isSeedingFromWeb && !loading && results.length === 0 && (
                         <div style={{ textAlign: 'center', padding: '30px 0', border: '1px dashed #d9d9d9', borderRadius: 8, marginTop: '50px' }}>
                             <Paragraph style={{ color: '#8c8c8c', }}>
-                                Enter a query to search the dynamic educational database. If no relevant reports are found, a relevant report will be fetched from the web!
+                                Enter a query to Fetch a Relevant Educational Report, Present it, and add it to the Expanding Knowledge Base.
                             </Paragraph>
                         </div>
                     )}

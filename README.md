@@ -10,6 +10,6 @@ The Gemini API looks across the entire web, finds a suitable report, and provide
 
 ## Database
 
-A Firebase Database is utilized to efficiently store Reports which have been found previously. This can greatly help in reducing research time if a topic has been searched for before, as it can be directly fetched from the "Knowledge Base". 🧠
+A Firebase Database is utilized to efficiently store Reports which have been found previously. This can greatly help in reducing research time if a topic has been searched for before, as it can be directly fetched from the "Knowledge Base", based on a Similarity Score. 🧠
 
 Every Time you research, the report gets added to the Database, creating a better response for a future user 📄
