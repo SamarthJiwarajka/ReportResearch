@@ -512,7 +512,7 @@ const App = () => {
                                     {results.map((report) => (
                                         <Card 
                                             key={report.id} 
-                                            style={{ borderRadius: 8, borderLeft: '3px solid #1890ff', maxWidth: '80vw', boxShadow: 'rgba(149, 157, 165, 0.2) 0px 8px 24px'}}                                            extra={<>
+                                            style={{ borderRadius: 8, borderLeft: '3px solid #1890ff', maxWidth: '70vw', boxShadow: 'rgba(149, 157, 165, 0.2) 0px 8px 24px', textWrap: 'wrap'}}                                            extra={<>
                                                 <Tag color="blue">Score: {report.score.toFixed(3)}</Tag>
                                                 <Tag color="geekblue">Category: {report.category || 'N/A'}</Tag>
                                                 <Tag color="purple">Publisher: {report.publisher || 'N/A'}</Tag>
